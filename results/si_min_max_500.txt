@@ -1,0 +1,7 @@
+./data/si/si6_m4D_m4D_625/si6_m4D_m625.06/pattern, ./data/si/si6_m4D_m4D_625/si6_m4D_m625.06/target, time out
+./data/si/si4_m4D_m4D_256/si4_m4D_m256.04/pattern, ./data/si/si4_m4D_m4D_256/si4_m4D_m256.04/target, time out
+./data/si/si4_m4D_m4Dr4_256/si4_m4Dr4_m256.07/pattern, ./data/si/si4_m4D_m4Dr4_256/si4_m4Dr4_m256.07/target, time out
+./data/si/si6_rand_r001_400/si6_r001_m400.00/pattern, ./data/si/si6_rand_r001_400/si6_r001_m400.00/target, time out
+./data/si/si2_m4D_m4Dr2_1296/si2_m4Dr2_m1296.03/pattern, ./data/si/si2_m4D_m4Dr2_1296/si2_m4Dr2_m1296.03/target, time out
+./data/si/si6_m4D_m4Dr2_1296/si6_m4Dr2_m1296.01/pattern, ./data/si/si6_m4D_m4Dr2_1296/si6_m4Dr2_m1296.01/target, time out
+./data/si/si6_rand_r001_400/si6_r001_m400.03/pattern, ./data/si/si6_rand_r001_400/si6_r001_m400.03/target, time out

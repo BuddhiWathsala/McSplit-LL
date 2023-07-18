@@ -1,0 +1,2 @@
+./data/si/si6_m4D_m4D_625/si6_m4D_m625.06/pattern, ./data/si/si6_m4D_m4D_625/si6_m4D_m625.06/target
+./data/si/si4_m4D_m4D_256/si4_m4D_m256.04/pattern, ./data/si/si4_m4D_m4D_256/si4_m4D_m256.04/target
