@@ -93,6 +93,9 @@ static struct {
 } arguments;
 
 static std::atomic<bool> abort_due_to_timeout;
+std::chrono::_V2::steady_clock::time_point START = std::chrono::steady_clock::now();
+std::chrono::duration<double> BEST_TIME;
+std::chrono::duration<double> ELAPSED_TIME;
 
 void set_default_arguments() {
     arguments.quiet = false;
@@ -535,6 +538,7 @@ void solve(const Graph & g0, const Graph & g1, vector<gtype> &V, vector<vector<g
         bestcount=cutbranches+1;
         bestnodes=nodes;
         bestfind=clock();
+        BEST_TIME = std::chrono::steady_clock::now() - START;
         if (!arguments.quiet) cout << "Incumbent size: " << incumbent.size() << endl;
     }
 
@@ -742,7 +746,7 @@ int main(int argc, char** argv) {
                 });
     }
 #endif
-  //  auto start = std::chrono::steady_clock::now();
+    START = std::chrono::steady_clock::now();
     start=clock();
 
     vector<int> g0_deg = calculate_degrees(g0);
@@ -813,6 +817,7 @@ int main(int argc, char** argv) {
    // auto stop = std::chrono::steady_clock::now();
    // auto time_elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count();
     clock_t time_elapsed=clock( )-start;
+    ELAPSED_TIME = std::chrono::steady_clock::now() - START;
     clock_t time_find=bestfind - start;
     /* Clean up the timeout thread */
    #if 0
@@ -845,9 +850,9 @@ int main(int argc, char** argv) {
         if (aborted)
             cout << "TIMEOUT" << endl;
     } else {
-        printf("%lu, %lld, %lld, %lld, %ld, %ld\n", solution.size(), nodes, cutbranches, 
-                conflicts, (time_elapsed*1000/CLOCKS_PER_SEC),
-                (time_find*1000/CLOCKS_PER_SEC));
+        printf("%lu, %lld, %lld, %lld, %f, %f, %ld, %ld\n", solution.size(), nodes, cutbranches, 
+                conflicts, ELAPSED_TIME.count(),
+                BEST_TIME.count(), (time_elapsed * 1000 / CLOCKS_PER_SEC), (time_find * 1000 / CLOCKS_PER_SEC));
     }
 }
 
