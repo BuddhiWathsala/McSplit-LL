@@ -18,7 +18,7 @@ task () {
   out1=$(./bin/run.o $MCSP_HEURISTIC ./${1} ./${2} -l -q -t ${TIMEOUT})
   out1="${1}, ${2}, ${out1}"
 #   out1=${out1//[,]/' '} 
-  echo $out1
+  # echo $out1
   available=1
   while [ "$available" -eq 1 ]
   do

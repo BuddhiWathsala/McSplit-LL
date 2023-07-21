@@ -525,8 +525,10 @@ void solve(const Graph & g0, const Graph & g1, vector<gtype> &V, vector<vector<g
 {
     if(arguments.timeout && double(clock() - start) / CLOCKS_PER_SEC > arguments.timeout)
     {
-        cout <<"time out" <<endl;
-        exit(0);
+        // cout << bestnodes;
+        // cout <<"time out" <<endl;
+        // exit(0);
+        return;
     }
   //  if (abort_due_to_timeout)
    //     return;
@@ -534,6 +536,7 @@ void solve(const Graph & g0, const Graph & g1, vector<gtype> &V, vector<vector<g
     //if (arguments.verbose) show(current, domains, left, right);
 
     if (current.size() > incumbent.size()) {//incumbent 现任的
+        // cout << "done";
         incumbent = current;
         bestcount=cutbranches+1;
         bestnodes=nodes;
