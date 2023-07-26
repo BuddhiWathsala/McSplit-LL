@@ -1,2 +1,2 @@
 g++ -Wall -Wunused-variable -std=c++20 -pthread *.cpp -g -o bin/run.o
-./bin/run.o min_max ./data/si/si6_bvg_b09m_800/si6_b09m_m800.00/pattern ./data/si/si6_bvg_b09m_800/si6_b09m_m800.00/target -l -q -t 10
+./bin/run.o min_max ./data/si/si2_m4D_m4Dr2_256/si2_m4Dr2_m256.02/pattern ./data/si/si2_m4D_m4Dr2_256/si2_m4Dr2_m256.02/target -l -q -t 20
