@@ -29,7 +29,7 @@ task () {
 }
 
 files=("si" "scalefree" "scalefree" "meshes-CVIU11" "LV" "largerLV" "images-CVIU11" "images-PR15" "biochemicalReactions")
-files=("biochemicalReactions")
+files=("largerLV")
 for f in ${files[@]}; do
     file_name=indicators/${f}_data.txt
     results_file_name=results/${f}_${MCSP_HEURISTIC}_${TIMEOUT}.txt
