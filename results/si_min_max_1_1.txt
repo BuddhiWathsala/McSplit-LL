@@ -1,0 +1,13 @@
+./data/si/si6_m4D_m4D_625/si6_m4D_m625.06/pattern, ./data/si/si6_m4D_m4D_625/si6_m4D_m625.06/target, 277, 584873, 382836, 236708, 1.005847, 0.378300, 1005, 378
+./data/si/si4_m4D_m4D_256/si4_m4D_m256.04/pattern, ./data/si/si4_m4D_m4D_256/si4_m4D_m256.04/target, 73, 763459, 404729, 158706, 1.000934, 0.729871, 1000, 729
+./data/si/si4_m4D_m4Dr4_256/si4_m4Dr4_m256.07/pattern, ./data/si/si4_m4D_m4Dr4_256/si4_m4Dr4_m256.07/target, 67, 837472, 544285, 274360, 1.000938, 0.937613, 1000, 937
+./data/si/si6_rand_r001_400/si6_r001_m400.00/pattern, ./data/si/si6_rand_r001_400/si6_r001_m400.00/target, 129, 818773, 512975, 312932, 1.002177, 0.779590, 1002, 779
+./data/si/si2_m4D_m4Dr2_1296/si2_m4Dr2_m1296.03/pattern, ./data/si/si2_m4D_m4Dr2_1296/si2_m4Dr2_m1296.03/target, 168, 304262, 199229, 62729, 1.017791, 0.157304, 1017, 157
+./data/si/si6_m4D_m4Dr2_1296/si6_m4Dr2_m1296.01/pattern, ./data/si/si6_m4D_m4Dr2_1296/si6_m4Dr2_m1296.01/target, 445, 485879, 371257, 235878, 1.019211, 0.155583, 1019, 155
+./data/si/si6_rand_r001_400/si6_r001_m400.03/pattern, ./data/si/si6_rand_r001_400/si6_r001_m400.03/target, 131, 894297, 596427, 328815, 1.002189, 0.750933, 1002, 750
+./data/si/si4_m4D_m4D_1296/si4_m4D_m1296.05/pattern, ./data/si/si4_m4D_m4D_1296/si4_m4D_m1296.05/target, 403, 221215, 110445, 19044, 1.017811, 0.364147, 1017, 364
+./data/si/si6_m4D_m4D_1296/si6_m4D_m1296.03/pattern, ./data/si/si6_m4D_m4D_1296/si6_m4D_m1296.03/target, 549, 419885, 344644, 62670, 1.058330, 0.578130, 1058, 578
+./data/si/si2_m4D_m4Dr2_1296/si2_m4Dr2_m1296.02/pattern, ./data/si/si2_m4D_m4Dr2_1296/si2_m4Dr2_m1296.02/target, 169, 250074, 174345, 69796, 1.027873, 0.857597, 1027, 857
+./data/si/si2_m4D_m4Dr4_256/si2_m4Dr4_m256.00/pattern, ./data/si/si2_m4D_m4Dr4_256/si2_m4Dr4_m256.00/target, 41, 733182, 510449, 338779, 1.001036, 0.003725, 1000, 3
+./data/si/si2_bvg_b09m_800/si2_b09m_m800.08/pattern, ./data/si/si2_bvg_b09m_800/si2_b09m_m800.08/target, 110, 703905, 517109, 374196, 1.007208, 0.047448, 1007, 47
+./data/si/si2_bvg_b06m_200/si2_b06m_m200.06/pattern, ./data/si/si2_bvg_b06m_200/si2_b06m_m200.06/target, 32, 946864, 649602, 408231, 1.000719, 0.912076, 1000, 911
