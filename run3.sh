@@ -28,8 +28,8 @@ task () {
   return
 }
 
-files=("largerLV" "si" "scalefree" "scalefree" "meshes-CVIU11" "LV" "images-CVIU11" "images-PR15" "biochemicalReactions")
-# files=("largerLV")
+# files=("largerLV" "si" "scalefree" "scalefree" "meshes-CVIU11" "LV" "images-CVIU11" "images-PR15" "biochemicalReactions")
+files=("largerLV")
 for f in ${files[@]}; do
     file_name=indicators/${f}_data.txt
     results_file_name=results/${f}_${MCSP_HEURISTIC}_${TIMEOUT}.txt
@@ -52,7 +52,7 @@ for f in ${files[@]}; do
           continue
         fi
         # echo $file1 $file2 $results_file_name
-        task $file1 $file2 $results_file_name
+        task $file1 $file2 $results_file_name &
         if [[ $i%$N_PARALLEL -eq 0 ]]
         then
             wait
