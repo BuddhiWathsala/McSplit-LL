@@ -7,7 +7,7 @@ macbuild:
 run:
 	./bin/run.o min_max ./data/tests/case1/pattern ./data/tests/case1/pattern -l -c
 
-MAX_TIME := 100
+MAX_TIME := 5
 test:
 	./bin/run.o min_max ./data/tests/case1/pattern ./data/tests/case1/target -l -c -q -t ${MAX_TIME}
 	./bin/run.o min_max ./data/tests/case2/pattern ./data/tests/case2/target -l -c -q -t ${MAX_TIME}
@@ -19,4 +19,3 @@ test:
 	./bin/run.o min_max ./data/tests/case8/g10 ./data/tests/case8/g51 -l -c -q -t ${MAX_TIME}
 	./bin/run.o min_max ./data/tests/case9/pattern ./data/tests/case9/target -l -c -q -t ${MAX_TIME}
 	./bin/run.o min_max ./data/tests/case10/pattern ./data/tests/case10/target -l -c -q -t ${MAX_TIME}
-	
