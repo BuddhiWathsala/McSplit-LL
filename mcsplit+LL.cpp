@@ -93,6 +93,7 @@ static struct {
 } arguments;
 
 static std::atomic<bool> abort_due_to_timeout;
+std::chrono::time_point<std::chrono::steady_clock> START;
 
 void set_default_arguments() {
     arguments.quiet = false;
@@ -187,13 +188,15 @@ static struct argp argp = { options, parse_opt, args_doc, doc };
                                      Stats
 *******************************************************************************/
 
-unsigned long long nodes{ 0 };
-unsigned long long cutbranches{0};
 unsigned long long conflicts=0;
 clock_t bestfind;
-unsigned long long bestnodes=0,bestcount=0;
 int dl=0;
 clock_t start;
+unsigned long long nodes = 0;
+unsigned long long cut_branches = 0;
+unsigned long long best_count = 0;
+unsigned long long calls_for_optimal = 0;
+std::chrono::duration<double> duration;
 
 /*******************************************************************************
                                  MCS functions
@@ -389,11 +392,10 @@ vector<Bidomain> rewardfeed(const vector<Bidomain> & d,int bd_idx,vector<VtxPair
     new_d.reserve(d.size());
     //unsigned int old_bound = current.size() + calc_bound(d)+1;//这里的domain是已经去掉选了的点，但是该点还没纳入current所以+1
     //unsigned int new_bound(0);
-    int l,r,j=-1;
+    int l,r=-1;
     int temp=0,total=0;
     int unmatched_left_len, unmatched_right_len;
     for (const Bidomain &old_bd : d) {
-        j++;
         l = old_bd.l;
         r = old_bd.r;
         if(leaves_match_size > 0 && old_bd.is_adjacent == false) {
@@ -520,27 +522,32 @@ void solve(const Graph & g0, const Graph & g1, vector<gtype> &V, vector<vector<g
         vector<VtxPair> & current, vector<int> &g0_matched, vector<int> &g1_matched,
         vector<Bidomain> & domains, vector<int> & left, vector<int> & right, unsigned int matching_size_goal)
 {
-    if(arguments.timeout && double(clock() - start) / CLOCKS_PER_SEC > arguments.timeout)
-    {
-        cout <<"time out" <<endl;
-        exit(0);
-    }
-  //  if (abort_due_to_timeout)
-   //     return;
- nodes++;
-    //if (arguments.verbose) show(current, domains, left, right);
 
     if (current.size() > incumbent.size()) {//incumbent 现任的
         incumbent = current;
-        bestcount=cutbranches+1;
-        bestnodes=nodes;
+        best_count=cut_branches+1;
+        calls_for_optimal=nodes;
         bestfind=clock();
-        if (!arguments.quiet) cout << "Incumbent size: " << incumbent.size() << endl;
+        duration = std::chrono::steady_clock::now() - START;
+//        if (!arguments.quiet) cout << "Incumbent size: " << incumbent.size() << endl;
     }
+
+    if(arguments.timeout && double(clock() - start) / CLOCKS_PER_SEC > arguments.timeout)
+    {
+        // cout <<"time out" <<endl;
+        abort_due_to_timeout = true;
+       return;
+    }
+//    if (abort_due_to_timeout)
+//        return;
+ nodes++;
+    //if (arguments.verbose) show(current, domains, left, right);
+
+
 
     unsigned int bound = current.size() + calc_bound(domains);//计算相连和不相连同构数的最大可能加上当前已经同构的点数
     if (bound <=incumbent.size() || bound < matching_size_goal){//剪枝
-        cutbranches++;
+        cut_branches++;
         return;
     }
    if (arguments.big_first && incumbent.size()==matching_size_goal)
@@ -716,31 +723,30 @@ int main(int argc, char** argv) {
     struct Graph g1 = readGraph(arguments.filename2, format, arguments.directed,
             arguments.edge_labelled, arguments.vertex_labelled);
 
-  //  std::thread timeout_thread;
-  //  std::mutex timeout_mutex;
+//    std::thread timeout_thread;
+//    std::mutex timeout_mutex;
     std::condition_variable timeout_cv;
-    abort_due_to_timeout.store(false);
-    bool aborted = false;
-#if 0
-    if (0 != arguments.timeout) {
-        timeout_thread = std::thread([&] {
-                auto abort_time = std::chrono::steady_clock::now() + std::chrono::seconds(arguments.timeout);
-                {
-                    /* Sleep until either we've reached the time limit,
-                     * or we've finished all the work. */
-                    std::unique_lock<std::mutex> guard(timeout_mutex);
-                    while (! abort_due_to_timeout.load()) {
-                        if (std::cv_status::timeout == timeout_cv.wait_until(guard, abort_time)) {
-                            /* We've woken up, and it's due to a timeout. */
-                            aborted = true;
-                            break;
-                        }
-                    }
-                }
-                abort_due_to_timeout.store(true);
-                });
-    }
-#endif
+//    abort_due_to_timeout.store(false);
+//    bool aborted = false;
+    START = std::chrono::steady_clock::now();
+    // if (0 != arguments.timeout) {
+    //     timeout_thread = std::thread([&] {
+    //             auto abort_time = std::chrono::steady_clock::now() + std::chrono::seconds(arguments.timeout);
+    //             {
+    //                 /* Sleep until either we've reached the time limit,
+    //                  * or we've finished all the work. */
+    //                 std::unique_lock<std::mutex> guard(timeout_mutex);
+    //                 while (! abort_due_to_timeout.load()) {
+    //                     if (std::cv_status::timeout == timeout_cv.wait_until(guard, abort_time)) {
+    //                         /* We've woken up, and it's due to a timeout. */
+    //                         aborted = true;
+    //                         break;
+    //                     }
+    //                 }
+    //             }
+    //             abort_due_to_timeout.store(true);
+    //             });
+    // }
   //  auto start = std::chrono::steady_clock::now();
     start=clock();
 
@@ -811,8 +817,9 @@ int main(int argc, char** argv) {
 
    // auto stop = std::chrono::steady_clock::now();
    // auto time_elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count();
-    clock_t time_elapsed=clock( )-start;
-    clock_t time_find=bestfind - start;
+   std::chrono::duration<double> time_elapsed = std::chrono::steady_clock::now() - START;
+    // clock_t time_elapsed=clock( )-start;
+    // clock_t time_find=bestfind - start;
     /* Clean up the timeout thread */
    #if 0
     if (timeout_thread.joinable()) {
@@ -824,26 +831,29 @@ int main(int argc, char** argv) {
         timeout_thread.join();
     }
 #endif
-    if (!check_sol(g0, g1, solution))
-        fail("*** Error: Invalid solution\n");
+//     if (!check_sol(g0, g1, solution))
+//         fail("*** Error: Invalid solution\n");
 
-    cout << "Solution size " << solution.size() << std::endl;
-    for (int i=0; i<g0.n; i++)
-        for (unsigned int j=0; j<solution.size(); j++)
-            if (solution[j].v == i)
-                cout << "(" << solution[j].v << " -> " << solution[j].w << ") ";
-    cout << std::endl;
+//     cout << "Solution size " << solution.size() << std::endl;
+//     for (int i=0; i<g0.n; i++)
+//         for (unsigned int j=0; j<solution.size(); j++)
+//             if (solution[j].v == i)
+//                 cout << "(" << solution[j].v << " -> " << solution[j].w << ") ";
+//     cout << std::endl;
 
-    cout<<"Nodes:                      " << nodes << endl;
-    cout<<"Cut branches:               "<<cutbranches<<endl;
-    cout<<"Conflicts:                    " <<conflicts<< endl;
-    printf("CPU time (ms):              %15ld\n", time_elapsed * 1000 / CLOCKS_PER_SEC);
-    printf("FindBest time (ms):              %15ld\n", time_find * 1000 / CLOCKS_PER_SEC);
-  #ifdef Best
-    cout<<"Best nodes:                 "<<bestnodes<<endl;
-    cout<<"Best count:                 "<<bestcount<<endl;
-#endif
-    if (aborted)
-        cout << "TIMEOUT" << endl;
+//     cout<<"Nodes:                      " << nodes << endl;
+//     cout<<"Cut branches:               "<<cutbranches<<endl;
+//     cout<<"Conflicts:                    " <<conflicts<< endl;
+//     printf("CPU time (ms):              %15ld\n", time_elapsed * 1000 / CLOCKS_PER_SEC);
+//     printf("FindBest time (ms):              %15ld\n", time_find * 1000 / CLOCKS_PER_SEC);
+//   #ifdef Best
+//     cout<<"Best nodes:                 "<<bestnodes<<endl;
+//     cout<<"Best count:                 "<<bestcount<<endl;
+// #endif
+//     if (aborted)
+//         cout << "TIMEOUT" << endl;
+    cout << solution.size() << ", " << check_sol(g0, g1, solution) << ", " << duration.count() << ", "
+            << time_elapsed.count() << ", " << nodes << ", " << calls_for_optimal << ", " << cut_branches << ", " <<
+                                                                                                                  abort_due_to_timeout << endl;
 }
 
