@@ -93,9 +93,6 @@ static struct {
 } arguments;
 
 static std::atomic<bool> abort_due_to_timeout;
-// std::chrono::_V2::steady_clock::time_point START = std::chrono::steady_clock::now();
-// std::chrono::duration<double> BEST_TIME;
-// std::chrono::duration<double> ELAPSED_TIME;
 
 void set_default_arguments() {
     arguments.quiet = false;
@@ -525,10 +522,8 @@ void solve(const Graph & g0, const Graph & g1, vector<gtype> &V, vector<vector<g
 {
     if(arguments.timeout && double(clock() - start) / CLOCKS_PER_SEC > arguments.timeout)
     {
-        // cout << bestnodes;
-        // cout <<"time out" <<endl;
-        // exit(0);
-        return;
+        cout <<"time out" <<endl;
+        exit(0);
     }
   //  if (abort_due_to_timeout)
    //     return;
@@ -536,12 +531,10 @@ void solve(const Graph & g0, const Graph & g1, vector<gtype> &V, vector<vector<g
     //if (arguments.verbose) show(current, domains, left, right);
 
     if (current.size() > incumbent.size()) {//incumbent 现任的
-        // cout << "done";
         incumbent = current;
         bestcount=cutbranches+1;
         bestnodes=nodes;
         bestfind=clock();
-        // BEST_TIME = std::chrono::steady_clock::now() - START;
         if (!arguments.quiet) cout << "Incumbent size: " << incumbent.size() << endl;
     }
 
@@ -722,8 +715,7 @@ int main(int argc, char** argv) {
             arguments.edge_labelled, arguments.vertex_labelled);
     struct Graph g1 = readGraph(arguments.filename2, format, arguments.directed,
             arguments.edge_labelled, arguments.vertex_labelled);
-    char* print_env = getenv("MCSP_PRINT");
-    bool PRINT = (print_env == NULL ? false : true);
+
   //  std::thread timeout_thread;
   //  std::mutex timeout_mutex;
     std::condition_variable timeout_cv;
@@ -749,7 +741,7 @@ int main(int argc, char** argv) {
                 });
     }
 #endif
-    // START = std::chrono::steady_clock::now();
+  //  auto start = std::chrono::steady_clock::now();
     start=clock();
 
     vector<int> g0_deg = calculate_degrees(g0);
@@ -820,7 +812,6 @@ int main(int argc, char** argv) {
    // auto stop = std::chrono::steady_clock::now();
    // auto time_elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start).count();
     clock_t time_elapsed=clock( )-start;
-    // ELAPSED_TIME = std::chrono::steady_clock::now() - START;
     clock_t time_find=bestfind - start;
     /* Clean up the timeout thread */
    #if 0
@@ -833,28 +824,26 @@ int main(int argc, char** argv) {
         timeout_thread.join();
     }
 #endif
-    if (PRINT) {
-        cout << "Solution size " << solution.size() << std::endl;
-        for (int i=0; i<g0.n; i++)
-            for (unsigned int j=0; j<solution.size(); j++)
-                if (solution[j].v == i)
-                    cout << "(" << solution[j].v << " -> " << solution[j].w << ") ";
-        cout << std::endl;
+    if (!check_sol(g0, g1, solution))
+        fail("*** Error: Invalid solution\n");
 
-        cout<<"Nodes:                      " << nodes << endl;
-        cout<<"Cut branches:               "<<cutbranches<<endl;
-        cout<<"Conflicts:                    " <<conflicts<< endl;
-        printf("CPU time (ms):              %15ld\n", time_elapsed * 1000 / CLOCKS_PER_SEC);
-        printf("FindBest time (ms):              %15ld\n", time_find * 1000 / CLOCKS_PER_SEC);
-    #ifdef Best
-        cout<<"Best nodes:                 "<<bestnodes<<endl;
-        cout<<"Best count:                 "<<bestcount<<endl;
-        #endif
-        if (aborted)
-            cout << "TIMEOUT" << endl;
-    } else {
-        printf("%lu, %lld, %lld, %lld, %ld, %ld\n", solution.size(), nodes, cutbranches, 
-                conflicts, (time_elapsed * 1000 / CLOCKS_PER_SEC), (time_find * 1000 / CLOCKS_PER_SEC));
-    }
+    cout << "Solution size " << solution.size() << std::endl;
+    for (int i=0; i<g0.n; i++)
+        for (unsigned int j=0; j<solution.size(); j++)
+            if (solution[j].v == i)
+                cout << "(" << solution[j].v << " -> " << solution[j].w << ") ";
+    cout << std::endl;
+
+    cout<<"Nodes:                      " << nodes << endl;
+    cout<<"Cut branches:               "<<cutbranches<<endl;
+    cout<<"Conflicts:                    " <<conflicts<< endl;
+    printf("CPU time (ms):              %15ld\n", time_elapsed * 1000 / CLOCKS_PER_SEC);
+    printf("FindBest time (ms):              %15ld\n", time_find * 1000 / CLOCKS_PER_SEC);
+  #ifdef Best
+    cout<<"Best nodes:                 "<<bestnodes<<endl;
+    cout<<"Best count:                 "<<bestcount<<endl;
+#endif
+    if (aborted)
+        cout << "TIMEOUT" << endl;
 }
 
