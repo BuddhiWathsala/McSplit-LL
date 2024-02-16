@@ -254,7 +254,7 @@ void show(const vector<VtxPair> &current, const vector<Bidomain> &domains,
 }
 
 bool check_sol(const Graph &g0, const Graph &g1, const vector<VtxPair> &solution) {
-    return true;
+//    return true;
     vector<bool> used_left(g0.n, false);
     vector<bool> used_right(g1.n, false);
     for (unsigned int i = 0; i < solution.size(); i++) {
@@ -725,32 +725,32 @@ int main(int argc, char **argv) {
     struct Graph g1 = readGraph(arguments.filename2, format, arguments.directed,
                                 arguments.edge_labelled, arguments.vertex_labelled);
 
-//    std::thread timeout_thread;
-//    std::mutex timeout_mutex;
+    std::thread timeout_thread;
+    std::mutex timeout_mutex;
     std::condition_variable timeout_cv;
-//    abort_due_to_timeout.store(false);
-//    bool aborted = false;
+    abort_due_to_timeout.store(false);
+    bool aborted = false;
     START = std::chrono::steady_clock::now();
-    // if (0 != arguments.timeout) {
-    //     timeout_thread = std::thread([&] {
-    //             auto abort_time = std::chrono::steady_clock::now() + std::chrono::seconds(arguments.timeout);
-    //             {
-    //                 /* Sleep until either we've reached the time limit,
-    //                  * or we've finished all the work. */
-    //                 std::unique_lock<std::mutex> guard(timeout_mutex);
-    //                 while (! abort_due_to_timeout.load()) {
-    //                     if (std::cv_status::timeout == timeout_cv.wait_until(guard, abort_time)) {
-    //                         /* We've woken up, and it's due to a timeout. */
-    //                         aborted = true;
-    //                         break;
-    //                     }
-    //                 }
-    //             }
-    //             abort_due_to_timeout.store(true);
-    //             });
-    // }
-    //  auto start = std::chrono::steady_clock::now();
-    start = clock();
+    if (0 != arguments.timeout) {
+        timeout_thread = std::thread([&] {
+            auto abort_time = std::chrono::steady_clock::now() + std::chrono::seconds(arguments.timeout);
+            {
+                /* Sleep until either we've reached the time limit,
+                 * or we've finished all the work. */
+                std::unique_lock<std::mutex> guard(timeout_mutex);
+                while (!abort_due_to_timeout.load()) {
+                    if (std::cv_status::timeout == timeout_cv.wait_until(guard, abort_time)) {
+                        /* We've woken up, and it's due to a timeout. */
+                        aborted = true;
+                        break;
+                    }
+                }
+            }
+            abort_due_to_timeout.store(true);
+        });
+    }
+//      auto start = std::chrono::steady_clock::now();
+//    start = clock();
 
     vector<int> g0_deg = calculate_degrees(g0);
     vector<int> g1_deg = calculate_degrees(g1);
@@ -824,7 +824,7 @@ int main(int argc, char **argv) {
     // clock_t time_elapsed=clock( )-start;
     // clock_t time_find=bestfind - start;
     /* Clean up the timeout thread */
-#if 0
+
     if (timeout_thread.joinable()) {
         {
             std::unique_lock<std::mutex> guard(timeout_mutex);
@@ -833,7 +833,6 @@ int main(int argc, char **argv) {
         }
         timeout_thread.join();
     }
-#endif
 //     if (!check_sol(g0, g1, solution))
 //         fail("*** Error: Invalid solution\n");
 
@@ -857,6 +856,6 @@ int main(int argc, char **argv) {
 //         cout << "TIMEOUT" << endl;
     cout << solution.size() << ", " << check_sol(g0, g1, solution) << ", " << duration.count() << ", "
          << time_elapsed.count() << ", " << nodes << ", " << calls_for_optimal << ", " << cut_branches << ", " <<
-         abort_due_to_timeout << endl;
+         aborted << endl;
 }
 
