@@ -17,7 +17,7 @@ write_output () {
 task () {
   # echo ./bin/run.o ./${1} ./${2} -l -t ${TIMEOUT} -i ${INIT_COUNT}
   # out1=$(/Users/buddhi/Documents/Work/PhD/Implementation/mcsplit-plus/bin/run.o ./${1} ./${2} -l -q -t ${TIMEOUT} -i ${INIT_COUNT} -m ${MAX_INNER_THRESHOLD})
-  out1=$(./bin/run.o min_max ./${1} ./${2}  -c -l -q -t ${TIMEOUT})
+  out1=$(./bin/run.o min_max ./${1} ./${2} -c -l -q -t ${TIMEOUT})
   # echo ${MAX_INNER_THRESHOLD}
   out1="${1}, ${2}, ${out1}"
 #   out1=${out1//[,]/' '} 
@@ -32,7 +32,8 @@ task () {
 }
 
 # files=("largerLV" "si" "scalefree" "scalefree" "meshes-CVIU11" "LV" "images-CVIU11" "images-PR15")
-files=("scalefree" "si" "largerLV")
+files=("completedLV")
+#files=("LV" "largerLV" "meshes-CVIU11"  "images-CVIU11" "si" "scalefree" "phase")
 for f in ${files[@]}; do
     file_name=indicators/${f}_data.txt
     results_file_name=results/${f}_${MCSP_HEURISTIC}_${TIMEOUT}.txt
