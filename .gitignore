@@ -66,3 +66,4 @@ data/scalefree
 data/si
 .DS_Store
 .vscode
+cmake-build-debug
